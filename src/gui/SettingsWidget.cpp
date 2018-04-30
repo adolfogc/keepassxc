@@ -85,6 +85,10 @@ SettingsWidget::SettingsWidget(QWidget* parent)
             SIGNAL(toggled(bool)),
             m_secUi->lockDatabaseIdleSpinBox,
             SLOT(setEnabled(bool)));
+    connect(m_secUi->closeTotpExportSettingsDialogCheckBox,
+            SIGNAL(toggled(bool)),
+            m_secUi->closeTotpExportSettingsDialogSpinBox,
+            SLOT(setEnabled(bool)));
 
 #ifndef WITH_XC_NETWORKING
     m_secUi->privacy->setVisible(false);
@@ -173,6 +177,11 @@ void SettingsWidget::loadSettings()
     m_secUi->passwordRepeatCheckBox->setChecked(config()->get("security/passwordsrepeat").toBool());
     m_secUi->hideNotesCheckBox->setChecked(config()->get("security/hidenotes").toBool());
 
+    m_secUi->closeTotpExportSettingsDialogCheckBox->setChecked(
+        config()->get("security/AutoCloseTotpExportSettingsDialog", true).toBool());
+    m_secUi->closeTotpExportSettingsDialogSpinBox->setValue(
+        config()->get("security/AutoCloseTotpExportSettingsDialogTimeout", 45).toInt());
+
     for (const ExtraPage& page : asConst(m_extraPages)) {
         page.loadSettings();
     }
@@ -236,6 +245,11 @@ void SettingsWidget::saveSettings()
     config()->set("security/hidepassworddetails", m_secUi->passwordDetailsCleartextCheckBox->isChecked());
     config()->set("security/passwordsrepeat", m_secUi->passwordRepeatCheckBox->isChecked());
     config()->set("security/hidenotes", m_secUi->hideNotesCheckBox->isChecked());
+
+    config()->set("security/AutoCloseTotpExportSettingsDialog",
+                  m_secUi->closeTotpExportSettingsDialogCheckBox->isChecked());
+    config()->set("security/AutoCloseTotpExportSettingsDialogTimeout",
+                  m_secUi->closeTotpExportSettingsDialogSpinBox->value());
 
     // Security: clear storage if related settings are disabled
     if (!config()->get("RememberLastDatabases").toBool()) {

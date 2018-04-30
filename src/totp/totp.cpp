@@ -21,7 +21,8 @@
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QMessageAuthenticationCode>
-#include <QRegExp>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 #include <QUrl>
 #include <QUrlQuery>
 #include <QVariant>
@@ -96,22 +97,22 @@ QString Totp::parseOtpString(QString key, quint8& digits, quint8& step)
         }
     } else {
         // Compatibility with "KeeOtp" plugin string format
-        QRegExp rx("key=(.+)", Qt::CaseInsensitive, QRegExp::RegExp);
-
-        if (rx.exactMatch(key)) {
+        const auto patternOptions =
+            QRegularExpression::CaseInsensitiveOption | QRegularExpression::DotMatchesEverythingOption;
+        const QRegularExpression keeOtpRegex("key=(.+)", patternOptions);
+        Q_ASSERT(keeOtpRegex.isValid());
+        auto match = keeOtpRegex.match(key);
+        if (match.hasMatch()) {
             QUrlQuery query(key);
-
             seed = query.queryItemValue("key");
             q_digits = query.queryItemValue("size").toUInt();
             if (q_digits == 6 || q_digits == 8) {
                 digits = q_digits;
             }
-
             q_step = query.queryItemValue("step").toUInt();
             if (q_step > 0 && q_step <= 60) {
                 step = q_step;
             }
-
         } else {
             seed = key;
         }
@@ -184,12 +185,13 @@ QUrl Totp::generateOtpString(const QString& secret,
                              quint8 digits,
                              quint8 step)
 {
+    const auto seed = parseOtpString(secret, digits, step).replace(" ", "");
     QUrl keyUri;
     keyUri.setScheme("otpauth");
     keyUri.setHost(type);
     keyUri.setPath(QString("/%1:%2").arg(issuer).arg(username));
     QUrlQuery parameters;
-    parameters.addQueryItem("secret", secret);
+    parameters.addQueryItem("secret", seed);
     parameters.addQueryItem("issuer", issuer);
     parameters.addQueryItem("algorithm", algorithm);
     parameters.addQueryItem("digits", QString::number(digits));

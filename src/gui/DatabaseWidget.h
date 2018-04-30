@@ -147,6 +147,7 @@ public slots:
     void copyNotes();
     void copyAttribute(QAction* action);
     void showTotp();
+    void showTotpKeyQrCode();
     void copyTotp();
     void setupTotp();
     void performAutoType();

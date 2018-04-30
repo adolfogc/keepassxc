@@ -45,6 +45,7 @@ RUN set -x \
       libsodium-dev \
       libcurl-no-gcrypt-dev \
       qt${QT5_VERSION}base \
+      qt${QT5_VERSION}svg \
       qt${QT5_VERSION}tools \
       qt${QT5_VERSION}x11extras \
       qt${QT5_VERSION}translations \
@@ -53,6 +54,7 @@ RUN set -x \
       libykpers-1-dev \
       libxi-dev \
       libxtst-dev \
+      libqrencode-dev \
       xvfb
 
 ENV CMAKE_PREFIX_PATH="/opt/qt${QT5_VERSION}/lib/cmake"

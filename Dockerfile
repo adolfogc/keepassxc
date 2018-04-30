@@ -44,6 +44,7 @@ RUN set -x \
         libsodium-dev \
         libcurl-no-gcrypt-dev \
         qt${QT5_VERSION}base \
+        qt${QT5_VERSION}svg \
         qt${QT5_VERSION}tools \
         qt${QT5_VERSION}x11extras \
         qt${QT5_VERSION}translations \
@@ -53,7 +54,8 @@ RUN set -x \
         libxtst-dev \
         mesa-common-dev \
         libyubikey-dev \
-        libykpers-1-dev
+        libykpers-1-dev \
+        libqrencode-dev
 
 ENV CMAKE_PREFIX_PATH="/opt/qt${QT5_VERSION}/lib/cmake"
 ENV CMAKE_INCLUDE_PATH="/opt/keepassxc-libs/include"
